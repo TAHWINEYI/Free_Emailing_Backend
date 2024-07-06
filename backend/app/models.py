@@ -5,8 +5,9 @@ from app import db
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    password_hash = db.Column(db.String(100), nullable=False)
+    firstname = db.Column(db.String(80), unique=True, nullable=False)
+    surname = db.Column(db.String(80), unique=True, nullable=False)
+    password = db.Column(db.String(100), nullable=False)
     emails = db.relationship('Email', backref='user', lazy='dynamic', foreign_keys='Email.sender_id')
     emails_received = db.relationship('Email', foreign_keys='Email.recipient_id', backref='recipient', lazy='dynamic')
 

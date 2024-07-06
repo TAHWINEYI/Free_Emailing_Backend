@@ -1,10 +1,13 @@
 from email.message import EmailMessage
 import smtplib
 from flask import app, jsonify, request, redirect, url_for, render_template
+from flask_login import LoginManager, current_user, login_user, logout_user
 from app.db import register_user
 from app.models import Email, Error, User
+from flask import Blueprint
+from app.db import db
 
-@login_manager.user_loader 
+@LoginManager.user_loader 
 def load_user(user_id): 
     return User.query.get(int(user_id)) 
 
@@ -27,14 +30,14 @@ def register():
     db.session.commit() 
     return jsonify({'message': 'User registered successfully'}), 201 
                                                                                                                                   
-@bp.route('/search', methods=['GET'])
+@app.route('/search', methods=['GET'])
 def search_emails():
      query = request.args.get('query')
      search = "%{}%".format(query)
      emails = Email.query.filter(Email.subject.like(search)).all()
      return render_template('search_results.html', emails=emails)
                                                                                                                                                                                                                                                                  
-@bp.route('/outbox', methods=['GET'])
+@app.route('/outbox', methods=['GET'])
 def show_outbox():
      # Sorting by timestamp in descending order so the newest emails come first
      emails = Email.query.order_by(Email.timestamp.desc()).all()
